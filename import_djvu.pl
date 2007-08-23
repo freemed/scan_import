@@ -27,6 +27,7 @@ my $rootpath = "$FindBin::Bin";
 
 # Libraries for configuration
 use Config::IniFiles;
+use Data::Dumper;
 
 # Transport
 use FreeMED::Relay;
