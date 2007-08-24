@@ -61,7 +61,7 @@ if (defined($options->{'debug'})) {
 }
 
 # Make sure there is only one copy of this running
-my $processes = `ps ax | grep -v grep | grep -v "^$$ " | grep "$0"`;
+my $processes = `ps ax | grep -v grep | grep -v "^ $$ " | grep -v "^$$ " | grep "$0"`;
 if ($processes) {
 	print $processes;
 	syslog("info", "Found a process running; terminating current attempt");
