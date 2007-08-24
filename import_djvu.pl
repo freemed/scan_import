@@ -27,15 +27,17 @@ my $rootpath = "$FindBin::Bin";
 
 # Libraries for configuration
 use Config::IniFiles;
+use Sys::Syslog;
 use Data::Dumper;
 
 # Transport
 use FreeMED::Relay;
 
+openlog("import_djvu", "cons,pid", "user");
+
 # First, we get the name of the tiff image
 my $original = shift || die "No DjVu image filename given!\n";
-print "Fax Import ------\n";
-print "original file name = $original\n";
+syslog( 'debug', "original file name = $original" );
 
 my $config = new Config::IniFiles ( -file => $rootpath.'/freemed.ini' );
 
@@ -47,16 +49,15 @@ $f->set_credentials(
 	$config->val('freemed', 'password'),
 );
 if ( ! $f->login() ) {
-	print "Could not login!\n";
+	syslog( 'error', "Could not login!" );
 	exit;
 }
 
 # Store the name of the fax file
 my $document = $original;
-my $local_filename = `basename "$document"`;
-$local_filename =~ s/\n//g;
+chomp ( my $local_filename = `basename "$document"` );
 my $path = $config->val('freemed', 'path'); 
-print "document = $document, local filename = $local_filename, path = $path\n";
+syslog( 'debug', "document = $document, local filename = $local_filename, path = $path" );
 
 chomp ( my $dt = `date +%Y-%m-%d` );
 
@@ -67,13 +68,14 @@ my $result = $f->call(
 	},
 	{ '@var' => 'file', '@filename' => $local_filename }
 );
-print "result = ".Dumper($result)."\n";
+syslog( 'debug', "result = ".Dumper($result) );
 
 # Remove *original* document (tiff)
 if ( $config->val( 'freemed', 'archive' ) ) {
+	syslog( 'info', "Archiving original file to ". $config->val( 'freemed', 'archive' ) );
 	system( "mv '${original}' '".$config->val( 'freemed', 'archive' )."' " );
 } else {
-	#print "Removing original file\n";
-	#unlink($original);
+	syslog( 'info', "Removing original file" );
+	unlink($original);
 }
 
