@@ -28,6 +28,7 @@ SCAN_PATH=/home/scan
 KEEP_PATH=/root/keep-pdf
 
 #------------ Do not touch below this line ----------------
+
 NOW=$( date +%s )
 WHEREAMI=$( dirname "$0" )
 TMP_PATH="${WHEREAMI}/spool/${NOW}"
@@ -50,7 +51,8 @@ fi
 
 mkdir -p "${TMP_PATH}"
 
-ls -1 "${SCAN_PATH}/" | grep -iE '\.doc$' | while read I; do
+#----- Handle non-PDF images -----
+ls -1 "${SCAN_PATH}/" | grep -iE '\.(doc|jpg|jpeg|tif|tiff)$' | while read I; do
 	#----- Check for timestamp
 	TS=$( stat -c %Y "${SCAN_PATH}/${I}" )
 	DIFF=$(( $NOW - $TS ))
@@ -58,15 +60,27 @@ ls -1 "${SCAN_PATH}/" | grep -iE '\.doc$' | while read I; do
 	if [ $DIFF -ge $MIN_AGE ]; then
 		log "Importing ${I}"
 		log "Converting '${SCAN_PATH}/${I}' -> '${TMP_PATH}/${I}.pdf'"
-		wvPDF "${SCAN_PATH}/${I}" "${TMP_PATH}/${I}.pdf"
+		case "${I}" in
+			*.doc)
+			wvPDF "${SCAN_PATH}/${I}" "${TMP_PATH}/${I}.pdf"
+			;;
+
+			*.tif|*.tiff)
+			tiff2pdf "${I}" > "${TMP_PATH}/${I}.pdf"
+			;;
+
+			*.jpg|*.jpeg)
+			convert "${SCAN_PATH}/${I}" "${TMP_PATH}/${I}.pdf"
+			;;
+		esac
 		( cd "${TMP_PATH}" ; "${WHEREAMI}/convert_and_import_pdf.sh" "${I}.pdf" )
-		mkdir -p "${KEEP_PATH}/"
 		mv "${SCAN_PATH}/${I}" "${KEEP_PATH}/" -v
 	else
 		log "Ignoring ${I}, less than ${MIN_AGE} seconds old."
 	fi
 done
 
+#----- Handle PDF Documents -----
 ls -1 "${SCAN_PATH}/" | grep -iE '\.pdf$' | while read I; do
 	#----- Check for timestamp
 	TS=$( stat -c %Y "${SCAN_PATH}/${I}" )
