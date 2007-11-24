@@ -73,9 +73,9 @@ ls -1 "${SCAN_PATH}/" | grep -iE '\.(doc|jpg|jpeg|tif|tiff)$' | while read I; do
 			convert "${SCAN_PATH}/${I}" "${TMP_PATH}/${I}.pdf"
 			;;
 		esac
-		( cd "${TMP_PATH}" ; "${WHEREAMI}/convert_and_import_pdf.sh" "${I}.pdf" )
 		if [ -f "${TMP_PATH}/${I}.pdf" ]; then
-			mv "${TMP_PATH}/${I}" /root/keep-pdf/ -v
+			( cd "${TMP_PATH}" ; "${WHEREAMI}/convert_and_import_pdf.sh" "${I}.pdf" )
+			mv "${SCAN_PATH}/${I}" "${KEEP_PATH}/" -v
 		else
 			log "ERROR: no PDF created, original file left in place"
 		fi
