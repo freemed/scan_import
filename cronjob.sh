@@ -66,7 +66,7 @@ ls -1 "${SCAN_PATH}/" | grep -iE '\.(doc|jpg|jpeg|tif|tiff)$' | while read I; do
 			;;
 
 			*.tif|*.tiff)
-			tiff2pdf "${I}" > "${TMP_PATH}/${I}.pdf"
+			tiff2pdf "${SCAN_PATH}/${I}" > "${TMP_PATH}/${I}.pdf"
 			;;
 
 			*.jpg|*.jpeg)
@@ -74,7 +74,12 @@ ls -1 "${SCAN_PATH}/" | grep -iE '\.(doc|jpg|jpeg|tif|tiff)$' | while read I; do
 			;;
 		esac
 		( cd "${TMP_PATH}" ; "${WHEREAMI}/convert_and_import_pdf.sh" "${I}.pdf" )
-		mv "${SCAN_PATH}/${I}" "${KEEP_PATH}/" -v
+		FS=$( wc -l "${TMP_PATH}/${I}.pdf" | cut -c1 )
+		if [ -f "${TMP_PATH}/${I}.pdf" -a "${FS}" != "0" ]; then
+			mv "${TMP_PATH}/${I}" /root/keep-pdf/ -v
+		else
+			log "ERROR: no PDF created, original file left in place"
+		fi
 	else
 		log "Ignoring ${I}, less than ${MIN_AGE} seconds old."
 	fi
