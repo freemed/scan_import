@@ -1,0 +1,6 @@
+$Id$
+
+Herein lie extensions and scripts that are specific to a particular
+manufacturer's device and/or covered by a license other than the
+license under which the scan_import daemon is licensed.
+
