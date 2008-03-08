@@ -1,0 +1,63 @@
+#! /bin/bash
+
+# Start/stop the cron daemon.
+#
+### BEGIN INIT INFO
+# Provides:          brscan-skey
+# Required-Start:    $syslog $time
+# Required-Stop:     $syslog $time
+# Default-Start:     3 4 5
+# Default-Stop:      S 0 1 6
+# Short-Description: Daemon for listing for scan jobs from a Brother net scanner
+# Description:       This daemon listens for scans sent by a brother network
+#                       scanner, then stashes the scan into a folder under the
+#                       the username who initiated it. This file requires the
+#                       brscan2 package provided by Brother. This script was
+#                       created so that I can export the images via samba for
+#                       the network. If more than one listener is listing for
+#                       this printer than it is random to which computer the
+#                       image is sent (or maybe to both if it is udp).
+
+### END INIT INFO
+
+# Created by: Ian Howard 
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+DAEMON="/usr/bin/brscan-skey"
+PIDFILE=/var/run/brscan-skey.pid
+
+# Arguments to brscan-key
+#
+ARGS=""
+
+#test -x $DAEMON || exit 0
+
+. /lib/lsb/init-functions
+
+case "$1" in
+start)
+ log_begin_msg "Starting deferred execution scheduler..."
+ start-stop-daemon --start --oknodo --quiet --pidfile $PIDFILE --startas $DAEMON -- $ARGS
+ log_end_msg $?
+ ;;
+stop)
+ log_begin_msg "Stopping deferred execution scheduler..."
+ start-stop-daemon --stop --oknodo --quiet --retry 30 --pidfile $PIDFILE --name brscan-skey-net-0.2.0-1
+ log_end_msg $?
+ ;;
+force-reload|restart)
+ log_begin_msg "Restarting deferred execution scheduler..."
+ if start-stop-daemon --stop --oknodo --quiet --retry 30 --pidfile $PIDFILE --name brscan-skey-net-0.2.0-1; then
+   start-stop-daemon --start --oknodo --quiet --pidfile $PIDFILE --startas $DAEMON -- $ARGS
+   log_end_msg $?
+ else
+   log_end_msg 1
+ fi
+ ;;
+*)
+ echo "Usage: /etc/init.d/brscan-skey {start|stop|restart|force-reload|reload}"
+ exit 1
+ ;;
+esac
+
+exit 0
