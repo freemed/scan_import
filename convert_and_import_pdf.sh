@@ -22,8 +22,9 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 TS=$(date +%s)
+ORIG="$1"
 
-djvudigital --dpi=200 "$1" "${TS}.$1.djvu" 2>&1
-"$(dirname "$0")/import_djvu.pl" "${TS}.$1.djvu"
-rm -f "$1"
+djvudigital --dpi=200 "${ORIG}" "${TS}.$(basename "${ORIG}").djvu" 2>&1
+"$(dirname "$0")/import_djvu.pl" "${TS}.$(basename "${ORIG}").djvu"
+rm -f "${ORIG}"
 

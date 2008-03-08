@@ -39,6 +39,11 @@ openlog("import_djvu", "cons,pid", "user");
 my $original = shift || die "No DjVu image filename given!\n";
 syslog( 'debug', "original file name = $original" );
 
+if ( ! -r $original ) {
+	syslog( 'err', "Unable to read $original, exiting cowardly" );
+	exit 1;
+}
+
 my $config = new Config::IniFiles ( -file => $rootpath.'/freemed.ini' );
 
 # Initialize relay
