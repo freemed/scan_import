@@ -1,0 +1,75 @@
+$Id$
+
+This is a quick bit of documentation explaining how to get scan key scanning
+working for a Brother MFC device under Linux.
+
+Under Debian testing, it requires the following dependencies:
+
+ * brscan / brscan2
+   These are the Brother maintained SANE drivers, and can be downloaded from
+   http://solutions.brother.com/linux/sol/printer/linux/sane_drivers.html
+   Please make sure to pick the proper driver for your MFC device.
+
+ * brscan-skey
+   This is also available from the Brother SANE driver download page, and
+   acts as a daemon. If your Brother says "Check connection" when you hit
+   the scan key, this thing isn't running.
+
+ * Working/running copy of FreeMED 0.9.x
+   If you don't have this, your documents simply won't go anywhere.
+
+ * scan_import and FreeMED::Relay
+   Check these out of Subversion (you can also grab FreeMED::Relay from
+   CPAN if you so desire):
+     svn co http://svn.freemedsoftware.org/freemed-utilities/scan_import/trunk scan_import
+     svn co http://svn.freemedsoftware.org/freemed-utilities/libfreemed/trunk/perl FreeMED_Perl
+   scan_import has to be installed in /usr/share/scan_import for any of
+   this to work. 
+
+ * gsdjvu
+   If you don't know how to install this, there's a build script under
+   "scripts" in FreeMED which does it for you.
+
+ * Debian dependencies:
+   djvulibre-bin
+   libconfig-inifiles-perl
+   libtiff-tools
+   imagemagick
+   make
+   netpbm
+   sane
+   sane-utils
+
+== INSTALLATION PROCEDURE ==
+
+(Please note, this is for Debian testing, if you're using anything besides
+Debian or Ubuntu or another Debian derivative, you're on your own.)
+
+1) Install all dependencies, including brscan-skey and the brscan driver,
+   as well as the scan_import pieces.
+
+2) Install the init script:
+
+   cp brscan-skey /etc/init.d/ -v
+   update-rc.d brscan-skey defaults
+
+3) Do a "make install" to push the scripts to the correct location on your
+   system.
+
+4) Run brsaneconfig2 to configure your scanner. (Please note that this step
+   is *crucial*, otherwise the MFC device will not see the machine.)
+
+5) Try to manually run scanimage or xsane to verify that your scanner is
+   indeed setup.
+
+6) Edit the freemed.ini file in /usr/share/scan_import/ so that it has
+   correct values for your FreeMED installation.
+
+7) Start the daemon.
+
+   /etc/init.d/brscan-skey start
+
+You should now be able to press the scan key, choose "OCR", and have scanned
+documents directly imported into your "Unfiled Documents" in FreeMED.
+
+-jeff@freemedsoftware.org -
