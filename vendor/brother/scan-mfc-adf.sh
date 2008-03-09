@@ -21,19 +21,26 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+DEVICE="$1"
+OUTPUT="$2"
+
 RESOLUTION=150
 
-if [ $# -ne 1 ]; then
-	echo "syntax: $(basename "$0") output.pdf"
+logger -t scan-mfc-adf "Instantiated with parameters $1 $2"
+
+if [ $# -lt 2 ]; then
+	echo "syntax: $(basename "$0") device-name output.pdf"
 	exit
 fi
 
 TMPDIR=/tmp/$(basename "$0")-$$.$(date +%s)
+logger -t scan-mfc-adf "Temporary directory = $TMPDIR"
 
 mkdir -p "${TMPDIR}"
 
 scanadf \
 	--verbose \
+	--device "${DEVICE}" \
 	--output-file "${TMPDIR}/image-%d.pnm" \
 	--source "Automatic Document Feeder" \
 	--mode Gray \
@@ -43,9 +50,9 @@ scanadf \
 echo "Encoding ..."
 i=1
 for P in ${TMPDIR}/*.p?m; do
-	echo "Source = $P -> $P.tif"
+	logger -t scan-mfc-adf "Converting PNM $P to TIFF $P.tif"
 	pnmtotiff -g3 "$P" > "$P.tif"
-	ls -l "$P.tif"
+	logger -t scan-mfc-adf "DEBUG: $(ls -l "$P.tif")"
 
 	#tesseract "${P}.tif" "${P}.tif"
 	#echo "---BEGIN PAGE: $i ---" >> ${TMPDIR}/ocr.txt
@@ -54,9 +61,13 @@ for P in ${TMPDIR}/*.p?m; do
 	#i=$(( $i + 1 ))
 done
 
+logger -t scan-mfc-adf "Combining all TIFF pages into single TIFF document (${TMPDIR}/output.tif)"
 tiffcp -c lzw ${TMPDIR}/*.tif ${TMPDIR}/output.tif
-tiff2pdf ${TMPDIR}/output.tif > "$1"
-#cp -f "${TMPDIR}/ocr.txt" "$1.txt"
+logger -t scan-mfc-adf "Converting ${TMPDIR}/output.tif to ${OUTPUT}"
+tiff2pdf ${TMPDIR}/output.tif > "${OUTPUT}"
+logger -t scan-mfc-adf "DEBUG: $(ls -l "${OUTPUT}")"
+#cp -f "${TMPDIR}/ocr.txt" "${OUTPUT}.txt"
 
+logger -t scan-mfc-adf "Cleaning up"
 rm -rf "${TMPDIR}/"
 

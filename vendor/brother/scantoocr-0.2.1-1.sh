@@ -11,7 +11,7 @@ set +o noclobber
 resolution=200
 device=$1
 
-logger -t brscan-skey "Instantiated scan key driver [OCR]"
+logger -t brscan-skey "Instantiated scan key driver [OCR, mapped to ADF import]"
 
 if [ "$device" == "" ]; then
 	logger -t brscan-skey "No parameters, exiting."
@@ -28,11 +28,8 @@ else
 fi
 output_file=$( mktemp ~/.brscan/brscan.XXXXXX )
 echo "Emulating 'scan to ocr' by pushing into FreeMED scan_import"
-echo "scan from $2($device) to $output_file"
-scanimage --device-name "$device" --resolution $resolution > $output_file
-logger -t brscan-skey "Created file ${output_file} with PPM data"
-logger -t brscan-skey "Converting to PDF using imagemagic ... "
-convert "${output_file}" "${output_file}.pdf"
+logger -t brscan-skey "Instantiating ADF scan"
+$(dirname "$0")/scan-mfc-adf.sh "${device}" "${output_file}.pdf"
 logger -t brscan-skey "Created file ${output_file}.pdf with PDF"
 /usr/share/scan_import/convert_and_import_pdf.sh "${output_file}.pdf"
 rm -f "${output_file}" "${output_file}.pdf"
