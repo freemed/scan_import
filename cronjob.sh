@@ -24,13 +24,13 @@
 #------------ Settings ------------
 
 MIN_AGE=120
-SCAN_PATH=/home/scan
+BASE_SCAN_PATH=/home/scan
 KEEP_PATH=/root/keep-pdf
 
 #------------ Do not touch below this line ----------------
 
 NOW=$( date +%s )
-WHEREAMI=$( dirname "$0" )
+WHEREAMI=$( cd $( dirname "$0" ) ; pwd )
 TMP_PATH="${WHEREAMI}/spool/${NOW}"
 LOCKFILE="/var/run/scan_import.cron"
 
@@ -50,6 +50,10 @@ else
 fi
 
 mkdir -p "${TMP_PATH}"
+
+for SCAN_PATH in $BASE_SCAN_PATH $*; do
+
+log "Iterating scan path $SCAN_PATH"
 
 #----- Handle non-PDF images -----
 ls -1 "${SCAN_PATH}/" | grep -iE '\.(doc|jpg|jpeg|tif|tiff)$' | while read I; do
@@ -97,6 +101,8 @@ ls -1 "${SCAN_PATH}/" | grep -iE '\.pdf$' | while read I; do
 	else
 		log "Ignoring ${I}, less than ${MIN_AGE} seconds old."
 	fi
+done
+
 done
 
 log "Cleaning up ..."
