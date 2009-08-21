@@ -5,7 +5,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2007 FreeMED Software Foundation
+# Copyright (C) 1999-2009 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@
 ORIG="$1"
 TS=$(date +%s)
 
+# Change the resolution setting here if you need to
+RESOLUTION=200
+
 if [ ! -r "${ORIG}" ]; then
 	echo "Could not open file '${ORIG}'";
 	logger -t convert_and_import_pdf "Could not open file '${ORIG}', exiting."
@@ -31,7 +34,7 @@ if [ ! -r "${ORIG}" ]; then
 fi
 
 logger -t convert_and_import_pdf "Converting ${ORIG} into djvu image"
-djvudigital --dpi=200 "${ORIG}" "${TS}.$(basename "${ORIG}").djvu" 2>&1
+djvudigital --dpi=$RESOLUTION "${ORIG}" "${TS}.$(basename "${ORIG}").djvu" 2>&1
 if [ -f "${ORIG}.txt" ]; then
 	logger -t convert_and_import_pdf "Importing text into ${TS}.$(basename "${ORIG}").djvu"
 	djvused "${TS}.$(basename "${ORIG}").djvu" -e "set-txt ${ORIG}.txt"
