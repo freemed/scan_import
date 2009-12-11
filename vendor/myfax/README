@@ -1,0 +1,20 @@
+$Id$
+
+To install the pFax/myFax fetching script:
+
+1) Install perl's Mime::Base64 and fetchmail, as well as the scan_import
+   daemon with a /home/scan directory.
+
+2) Create a GMail account and enable pop3 access in Settings.
+
+3) Create user account, something like "faxdummy"
+
+4) Modify fetchmailrc with proper username and password for gmail, then
+   install in ~/.fetchmailrc
+
+5) Install both scripts into user's home directory.
+
+6) Allow the user to have sudo access to ~/extractattach.pl
+
+7) Install cron fragment into user's crontab.
+

@@ -1,0 +1,1 @@
+*/3 * * * *     ~/process-mail.sh 2>&1 | logger -t process-mail

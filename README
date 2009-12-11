@@ -4,7 +4,7 @@ Authors:
      Jeff Buchbinder <jeff@freemedsoftware.org>
 
 FreeMED Electronic Medical Record and Practice Management System
-Copyright (C) 1999-2007 FreeMED Software Foundation
+Copyright (C) 1999-2009 FreeMED Software Foundation
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,6 +31,12 @@ freemed.ini in the same directory as the daemon.
 The daemon takes a single argument, which is the directory to be watched.
 
 VERSION HISTORY
+
+0.8.x BRANCH
+
+	This is a branched version to work with FreeMED 0.8.x. It's pretty
+	dead, so don't expect any further development here, just a
+	reference for people who still use FreeMED 0.8.x.
 
 0.5
 	Rewrite transport to use 0.9.x+ data relay, JSON style.
