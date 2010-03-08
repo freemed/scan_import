@@ -4,7 +4,7 @@ Authors:
      Jeff Buchbinder <jeff@freemedsoftware.org>
 
 FreeMED Electronic Medical Record and Practice Management System
-Copyright (C) 1999-2007 FreeMED Software Foundation
+Copyright (C) 1999-2010 FreeMED Software Foundation
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,13 +22,27 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 --------------------------------------------------------------------------
 
-This is the FreeMED Scan Import daemon. It uses FAM (file alteration monitor)
-to track when files are transfered into its watch directory, then imports
-them into a FreeMED 0.9.x+ install via the data relay. It does not have to
-exist on the same machine as the FreeMED install. Its configuration file is
-freemed.ini in the same directory as the daemon.
+README
 
-The daemon takes a single argument, which is the directory to be watched.
+This is the FreeMED Scan Import daemon. It is run as a cronjob every minute
+and uses the FreeMED 0.9.x+ data relay to push djvu encoded copies of source
+material into a FreeMED install. It is configured by freemed.ini in the
+install directory.
+
+INSTALLATION
+
+* Install a copy of FreeMED::Relay from Subversion or a Debian package, along
+  with libjson-perl, libconfig-inifiles-perl, libsys-syslog-perl,
+  djvulibre-bin.
+
+* Make sure you have a working copy of gsdjvu installed on your system.
+  FreeMED comes with a script to automate the build and install process.
+
+* If you do not have a copy of djvudigital installed on your system, copy
+  the version from FreeMED into /usr/bin/ and make it executable.
+
+* Install this directory in /usr/share/scan_import on the server which
+  will be running Scan Import.
 
 VERSION HISTORY
 

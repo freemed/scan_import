@@ -5,7 +5,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2007 FreeMED Software Foundation
+# Copyright (C) 1999-2010 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 use FindBin;
-use lib "$FindBin::Bin/../lib/perl";
+##use lib "$FindBin::Bin/../lib/perl";
 my $rootpath = "$FindBin::Bin";
 
 # Libraries for configuration
