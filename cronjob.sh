@@ -5,7 +5,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2007 FreeMED Software Foundation
+# Copyright (C) 1999-2010 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ for SCAN_PATH in $BASE_SCAN_PATH $*; do
 log "Iterating scan path $SCAN_PATH"
 
 #----- Handle non-PDF images -----
-ls -1 "${SCAN_PATH}/" | grep -iE '\.(doc|jpg|jpeg|tif|tiff)$' | while read I; do
+ls -1 "${SCAN_PATH}/" | grep -iE '\.(doc|odt|jpg|jpeg|tif|tiff)$' | while read I; do
 	#----- Check for timestamp
 	TS=$( stat -c %Y "${SCAN_PATH}/${I}" )
 	DIFF=$(( $NOW - $TS ))
@@ -65,8 +65,9 @@ ls -1 "${SCAN_PATH}/" | grep -iE '\.(doc|jpg|jpeg|tif|tiff)$' | while read I; do
 		log "Importing ${I}"
 		log "Converting '${SCAN_PATH}/${I}' -> '${TMP_PATH}/${I}.pdf'"
 		case "${I}" in
-			*.doc)
-			wvPDF "${SCAN_PATH}/${I}" "${TMP_PATH}/${I}.pdf"
+			*.doc|*.odt|*.DOC|*.ODT)
+			"${WHEREAMI}/DocumentConverter.py" "${SCAN_PATH}/${I}" "${TMP_PATH}/${I}.pdf"
+			###wvPDF "${SCAN_PATH}/${I}" "${TMP_PATH}/${I}.pdf"
 			;;
 
 			*.tif|*.tiff)

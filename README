@@ -33,10 +33,12 @@ INSTALLATION
 
 * Install a copy of FreeMED::Relay from Subversion or a Debian package, along
   with libjson-perl, libconfig-inifiles-perl, libsys-syslog-perl,
-  djvulibre-bin.
+  djvulibre-bin, python-uno.
 
 * Make sure you have a working copy of gsdjvu installed on your system.
   FreeMED comes with a script to automate the build and install process.
+  (The gsdjvu executable should be symlinked into /usr/bin/ for it to
+  function from cron properly)
 
 * If you do not have a copy of djvudigital installed on your system, copy
   the version from FreeMED into /usr/bin/ and make it executable.
@@ -44,11 +46,22 @@ INSTALLATION
 * Install this directory in /usr/share/scan_import on the server which
   will be running Scan Import.
 
+* Set up a headless instance of openoffice if you're using DOC/ODT import.
+  See: http://www.artofsolving.com/node/10 , an example is:
+    soffice -headless -accept="socket,host=127.0.0.1,port=8100;urp;" -nofirststartwizard
+
+* Create a cron fragment to run this every minute, like this:
+  * * * * * root /usr/share/scan_import/cronjob.sh 2>&1 | logger -t scan_import
+  and put it in your /etc/cron.d/ directory. Reload cron so this is picked
+  up.
+
 VERSION HISTORY
 
 0.5
 	Rewrite transport to use 0.9.x+ data relay, JSON style.
 	Configuration file now specific to this process.
+	We're a cronjob now.
+	Using PyODConverter ( http://www.artofsolving.com/opensource/pyodconverter ) for DOC/ODT conversion
 
 0.4
 	Rewrite daemonizing
